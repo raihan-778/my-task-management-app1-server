@@ -36,11 +36,11 @@ async function run() {
       .collection("allMediaTasks");
 
     //post method for save users data.
-    app.post("/users", async (req, res) => {
+    /*   app.post("/users", async (req, res) => {
       const query = req.body;
       const result = await usersCollection.insertOne(query);
       res.send(result);
-    });
+    }); */
 
     //post method for add tasks in database.
     app.post("/all-task", async (req, res) => {
@@ -115,11 +115,23 @@ async function run() {
       );
       res.send(result);
     });
-
-    app.get("/my-tasks/completed", async (req, res) => {
-      const query = { completed: "true" };
-      const products = await tasksCollection.find(query).toArray();
-      res.send(products);
+    //patch api for task update
+    app.patch("/my-tasks/:id", async (req, res) => {
+      const id = req.params.id;
+      const title = req.body.title;
+      const filter = { _id: ObjectId(id) };
+      const updatedDoc = {
+        $set: { title: title },
+      };
+      const updatedTask = await tasksCollection.updateOne(filter, updatedDoc);
+      res.send(updatedTask);
+    });
+    //get api for picking up completed tasks
+    app.get("/my-tasks/completed/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const tasks = await tasksCollection.find(query).toArray();
+      res.send({ isConmpleted: tasks?.completed === "true" });
     });
   } finally {
   }

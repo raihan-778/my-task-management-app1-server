@@ -26,11 +26,11 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const usersCollection = client.db("tmSystem").collection("tmUsers");
+    // const usersCollection = client.db("tmSystem").collection("tmUsers");
     const tasksCollection = client.db("tmSystem").collection("allTasks");
-    const completedTaskCollection = client
-      .db("tmSystem")
-      .collection("completedTask");
+    // const completedTaskCollection = client
+    //   .db("tmSystem")
+    //   .collection("completedTask");
     const mediaTasksCollection = client
       .db("tmSystem")
       .collection("allMediaTasks");
@@ -116,15 +116,20 @@ async function run() {
       res.send(result);
     });
     //patch api for task update
-    app.patch("/my-tasks/:id", async (req, res) => {
+    app.put("/my-tasks/:id", async (req, res) => {
       const id = req.params.id;
-      const title = req.body.title;
       const filter = { _id: ObjectId(id) };
+      const about = req.body;
+      const options = { upsert: true };
       const updatedDoc = {
-        $set: { title: title },
+        $set: { title: about.title },
       };
-      const updatedTask = await tasksCollection.updateOne(filter, updatedDoc);
-      res.send(updatedTask);
+      const result = await tasksCollection.updateOne(
+        filter,
+        options,
+        updatedDoc
+      );
+      res.send(result);
     });
     //get api for picking up completed tasks
     app.get("/my-tasks/completed/:email", async (req, res) => {

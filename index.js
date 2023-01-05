@@ -116,7 +116,7 @@ async function run() {
       res.send(result);
     });
     //patch api for task update
-    app.put("/my-tasks/:id", async (req, res) => {
+    app.put("/update/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const about = req.body;
@@ -126,8 +126,8 @@ async function run() {
       };
       const result = await tasksCollection.updateOne(
         filter,
-        options,
-        updatedDoc
+        updatedDoc,
+        options
       );
       res.send(result);
     });
